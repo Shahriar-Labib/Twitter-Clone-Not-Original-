@@ -8,6 +8,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import ReplyModal from './ReplyModal';
 
 const TweetCard = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -40,7 +41,8 @@ const TweetCard = () => {
     const navigate = useNavigate();
 
     return (
-        <div className='flex'>
+        <React.Fragment>
+            <div className='flex'>
             <Avatar
                 onClick={() => navigate(`/profile/${6}`)}
                 className='cursor-pointer'
@@ -126,7 +128,11 @@ const TweetCard = () => {
 
                 </div>
             </div>
-        </div>
+            </div>
+        <section>
+            <ReplyModal />
+        </section>
+        </React.Fragment>
     )
 }
 
