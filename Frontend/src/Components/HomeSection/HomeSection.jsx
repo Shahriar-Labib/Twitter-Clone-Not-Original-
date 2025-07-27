@@ -16,7 +16,7 @@ const validationSchema = Yup.object().shape({
 const HomeSection = () => {
 
     const [uploadingImage, setUploadingImage] = useState(false);
-    const [selectImage,setSelectedImage] = useState(false)
+    const [selectImage,setSelectedImage] = useState("")
     const handleSubmit = (values) => {
         console.log("values = ",values)
     }

@@ -9,10 +9,16 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ReplyModal from './ReplyModal';
+import { useState } from 'react';
 
 const TweetCard = () => {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+
+    const [openReplyModal,setOpenReplyModal] = useState(false);
+    
+    const handleOpenReplyModel = () => setOpenReplyModal(true)
+    const handleCloseReplyModal = () => setOpenReplyModal(false)
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -26,9 +32,7 @@ const TweetCard = () => {
         handleClose();
     }
 
-    const handleOpenReplyModel = () => {
-        console.log("open model");
-    }
+   
 
     const handleCreateRetweet = () => {
         console.log("handle tweet");
@@ -130,7 +134,7 @@ const TweetCard = () => {
             </div>
             </div>
         <section>
-            <ReplyModal />
+            <ReplyModal open={openReplyModal} handleClose={handleCloseReplyModal} />
         </section>
         </React.Fragment>
     )

@@ -3,6 +3,13 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import { Avatar } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
+import FmdGoodIcon from '@mui/icons-material/FmdGood';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ImageIcon from '@mui/icons-material/Image';
+import { useFormik } from 'formik';
 
 const style = {
   position: 'absolute',
@@ -13,77 +20,127 @@ const style = {
   bgcolor: 'background.paper',
   border: 'none',
   boxShadow: 24,
-  p: 4,
+  p: 3,
   outline: 'none',
   borderRadius: 4,
 };
 
-export default function ReplyModal() {
-  const [open, setOpen] = React.useState(false);
+export default function ReplyModal({handleClose,open}) {
+  
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  
+  const [uploadingImage, setUploadingImage] = React.useState(false);
+  const [selectImage, setSelectedImage] = React.useState("");
+
+  const navigate = useNavigate();
+
+  const handleSubmit = (values) => {
+    console.log("Handle submit: ", values)
+  }
+
+  const formik = useFormik({
+    initialValues: {
+      content: "",
+      image: "",
+      twitId: 4,
+    },
+    onSubmit: handleSubmit
+  })
+
+  const handleSelectImage = (event) => {
+    setUploadingImage(true);
+    const imgUrl = event.target.files[0];
+    formik.setFieldValue("image", imgUrl);
+    setSelectedImage(imgUrl)
+    setUploadingImage(false);
+  }
 
   return (
     <div>
       <Button onClick={handleOpen}>Open modal</Button>
       <Modal
-        open={true}
+        open={open}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <div className='flex'>
+          {/* Header Section */}
+          <div className='flex items-start'>
             <Avatar
-                onClick={() => navigate(`/profile/${6}`)}
-                className='cursor-pointer'
-                alt='username'
-                src='https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp' />
-
-            <div className='w-full pl-2'> {/* Added pl-2 for slight left padding */}
-                <div className='flex justify-between items-center'>
-                    <div className='flex cursor-pointer items-center space-x-2'>
-                        <span className='font-semibold'>Just Checking</span>
-                        <span className='text-gray-600'>@just checking . 2m</span>
-                        <img className="ml-2 w-5 h-5" src="https://images.seeklogo.com/logo-png/39/1/google-verified-logo-png_seeklogo-392672.png" alt="" />
-                    </div>
-
-                    <div>
-                        <Button
-                            id="basic-button"
-                            aria-controls={open ? 'basic-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={open ? 'true' : undefined}
-                            onClick={handleClick}
-                        >
-                            <MoreHorizIcon />
-                        </Button>
-                        <Menu
-                            id="basic-menu"
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
-                            MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                            }}
-                        >
-                            <MenuItem onClick={handleDeleteTweet}>Delete</MenuItem>
-                            <MenuItem onClick={handleDeleteTweet}>Edit</MenuItem>
-                        </Menu>
-                    </div>
-                </div>
-
-                <div onClick={() => navigate(`/twit/${3}`)} className='cursor-pointer'>
-                    <p className='mb-2 p-0'>
-                        twitter clone - full stack project with spring boot and react
-                    </p>
-                    <img className='w-[28rem] border border-gray-400 p-5 rounded-md' src="https://media.istockphoto.com/id/539115110/photo/colosseum-in-rome-and-morning-sun-italy.jpg?s=612x612&w=0&k=20&c=9NtFxHI3P2IBWRY9t0NrfPZPR4iusHmVLbXg2Cjv9Fs=" alt="" />
-                </div>
-
-                
-                
+              onClick={() => navigate(`/profile/${6}`)}
+              className='cursor-pointer'
+              alt='username'
+              src='https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp'
+            />
+            <div className='w-full pl-3'>
+              <div className='flex items-center space-x-2'>
+                <span className='font-semibold text-sm'>Code With Zosh</span>
+                <span className='text-gray-500 text-sm'>@codewithzosh · 2m</span>
+                <img
+                  className="ml-1 w-4 h-4"
+                  src="https://images.seeklogo.com/logo-png/39/1/google-verified-logo-png_seeklogo-392672.png"
+                  alt=""
+                />
+              </div>
+              <p className='text-sm mt-1'>
+                twitter clone - full stack project with spring boot and react
+              </p>
             </div>
-        </div>
+          </div>
+
+          {/* Input Section */}
+          <div className='flex mt-6'>
+            <Avatar
+              alt='username'
+              src='https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp'
+            />
+            <form onSubmit={formik.handleSubmit} className='w-full ml-3'>
+              <input
+                type="text"
+                name='content'
+                placeholder='What is happening'
+                className='w-full text-xl border-none outline-none bg-transparent placeholder-gray-500'
+                {...formik.getFieldProps("content")}
+              />
+              {formik.errors.content && formik.touched.content && (
+                <span className='text-red-500'>{formik.errors.content}</span>
+              )}
+
+              {/* Icons and Button */}
+              <div className='flex justify-between items-center mt-4'>
+                <div className='flex items-center space-x-4'>
+                  <label htmlFor="imageFile" className='cursor-pointer'>
+                    <ImageIcon className='text-[#1d9bf0]' />
+                    <input
+                      type="file"
+                      name='imageFile'
+                      id="imageFile"
+                      className='hidden'
+                      onChange={handleSelectImage}
+                    />
+                  </label>
+                  <FmdGoodIcon className='text-[#1d9bf0]' />
+                  <LocalOfferIcon className='text-[#1d9bf0]' />
+                </div>
+
+                <Button
+                  variant='contained'
+                  type='submit'
+                  sx={{
+                    borderRadius: '9999px',
+                    px: 3,
+                    py: 1,
+                    bgcolor: '#1d9bf0',
+                    textTransform: 'none',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  Tweet
+                </Button>
+              </div>
+            </form>
+          </div>
         </Box>
       </Modal>
     </div>
