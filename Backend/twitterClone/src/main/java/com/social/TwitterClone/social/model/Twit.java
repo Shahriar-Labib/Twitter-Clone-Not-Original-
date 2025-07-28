@@ -3,6 +3,7 @@ package com.social.TwitterClone.social.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,8 @@ public class Twit {
 
     private boolean isReply;
     private boolean isTwit;
+
+    private LocalDateTime CreatedAt;
 
 
 }
