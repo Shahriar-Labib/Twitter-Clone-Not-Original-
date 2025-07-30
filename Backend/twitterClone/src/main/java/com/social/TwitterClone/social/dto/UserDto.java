@@ -14,7 +14,7 @@ public class UserDto {
     private String image;
     private String location;
     private String website;
-    private String birthData;
+    private String birthDate;
     private String mobile;
     private String backgroundImage;
     private String bio;

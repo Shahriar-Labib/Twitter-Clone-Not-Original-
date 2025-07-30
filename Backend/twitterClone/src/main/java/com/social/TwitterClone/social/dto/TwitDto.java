@@ -30,6 +30,8 @@ public class TwitDto {
 
     private boolean isRetwit;
 
+
+
     private List<Long> rettwitUserId;
     private List<TwitDto> replyTwits;
 }
