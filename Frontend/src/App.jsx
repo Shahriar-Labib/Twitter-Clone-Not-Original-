@@ -12,7 +12,7 @@ function App() {
     <div className=''>
 
       <Routes>
-        <Route path='/*' element={true?<HomePage/>:<Authentication/>} />
+        <Route path='/*' element={false?<HomePage/>:<Authentication/>} />
       </Routes>
     </div>
   )
