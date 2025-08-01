@@ -3,19 +3,33 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, MenuItem, Menu } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { navigationMenu } from './NavigationMenu';
+import { useDispatch, useSelector } from 'react-redux';
+import store from '../Store/store';
+import { logout } from '../Store/Auth/Action';
+import { UPDATE_USER_PROFILE } from '../Store/Auth/ActionType';
 
 const Navigation = () => {
+  const {auth} = useSelector(store=>store)
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const dispatch = useDispatch();
+
+  // Debug logging
+  console.log("Navigation - auth state:", auth);
+  console.log("Navigation - user data:", auth.user);
+  console.log("Navigation - user fullName:", auth.user?.fullName);
+  console.log("Navigation - user email:", auth.user?.email);
+  console.log("Navigation - user object keys:", auth.user ? Object.keys(auth.user) : "No user object");
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleLogout = () => {
-    console.log("logout");
-    handleClose();
+   console.log("logout");
+   handleClose()
+   dispatch(logout());
   }
 
   const handleClose = () => {
@@ -84,9 +98,12 @@ const Navigation = () => {
         <div className='flex items-center space-x-2'>
           <Avatar alt='username' src='https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp'/>
           <div>
-            <span className='font-semibold'>just checking</span>
-            <br />
-            <span className='opacity-70'>@dummyMail</span>
+            <p className="font-semibold">{auth.user?.fullName || auth.user?.email?.split('@')[0] || "Unknown User"}</p>
+            <p className="text-sm text-gray-600">{auth.user?.email || "No email"}</p>
+           
+            {auth.error && (
+              <p className="text-xs text-red-500">Error: {auth.error}</p>
+            )}
           </div>
         </div>
 
@@ -111,6 +128,11 @@ const Navigation = () => {
           >
             
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            {/* <MenuItem onClick={() => {
+              // Temporary: Update user's fullName
+              const updatedUser = { ...auth.user, fullName: 'Jenny' };
+              dispatch({ type: UPDATE_USER_PROFILE, payload: updatedUser });
+            }}>Update Name (Test)</MenuItem> */}
           </Menu>
         </div>
       </div>
