@@ -1,7 +1,7 @@
-import { Button, TextField, Grid } from '@mui/material';
+import { Button, Grid, InputLabel, MenuItem, TextField,Select } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { useFormik } from 'formik';
-import React from 'react';
+import React from 'react'
 import * as Yup from 'yup';
 
 const validationSchema = Yup.object().shape({
@@ -9,20 +9,47 @@ const validationSchema = Yup.object().shape({
   password: Yup.string().required("Password is required")
 });
 
-export const SigninForm = () => {
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-    validationSchema,
-    onSubmit: (values) => {
-      console.log("form value ", values);
-    }
-  });
+ const currentYear = new Date().getFullYear();
+ const years = Array.from({length:100},(_,i)=>currentYear-i);
+ const days = Array.from({length:31},(_,i)=>i+1);
+ const months = [
+    {values:1,label:"January"},
+
+ ]
+export default function SignupForm() {
+
+     const formik = useFormik({
+        initialValues: {
+          fullName: "",
+          email: "",
+          password: "",
+          dateOfBirth:{
+            day: '',
+            month: '',
+            year: ''
+          }
+          
+        },
+        validationSchema,
+        onSubmit: (values) => {
+
+            const {day,month,year} = values.dateOfBirth
+            const dateOfBirth = `${year}-${month}-${day}`
+            values.dateOfBirth = dateOfBirth;
+          console.log("form value ", values);
+        }
+      });
+
+      const handleDateChange = (name) => (event) =>{
+        formik.setFieldValue("dateOfBirth",{
+            ...formik.values.dateOfBirth,
+            [name]:event.target.value,
+        })
+      }
+
 
   return (
- <form onSubmit={formik.handleSubmit}>
+    <form onSubmit={formik.handleSubmit}>
     <Grid
       container
       spacing={2}
@@ -39,6 +66,27 @@ export const SigninForm = () => {
        
       }}
     >
+          <Grid item xs={12} sx={{ width: "100%" }}>
+        <TextField
+          fullWidth
+          label="Full Name"
+          name="fullName"
+          variant="outlined"
+          size="medium"
+          value={formik.values.fullName}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.fullName && Boolean(formik.errors.fullName)}
+          helperText={formik.touched.fullName && formik.errors.fullName}
+          sx={{
+            marginBottom: "10px",
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '10px',
+            }
+          }}
+        />
+      </Grid>
+
       <Grid item xs={12} sx={{ width: "100%" }}>
         <TextField
           fullWidth
@@ -82,6 +130,18 @@ export const SigninForm = () => {
         />
       </Grid>
 
+      <Grid item xs={4}
+      >
+        <InputLabel>Date</InputLabel>
+        <Select name='day' 
+        onChange={formik.handleChange("day")}
+        onBlur={formik.handleBlur}
+        value={formik.values.dateOfBirth.day}>
+            {days.map((day)=><MenuItem key={day} value={day}>{day}</MenuItem>)}
+        </Select>
+
+      </Grid>
+
       <Grid item xs={12} sx={{ width: "100%" }}>
         <Button
           sx={{
@@ -102,5 +162,5 @@ export const SigninForm = () => {
       </Grid>
     </Grid>
   </form>
-  );
-};
+  )
+}
