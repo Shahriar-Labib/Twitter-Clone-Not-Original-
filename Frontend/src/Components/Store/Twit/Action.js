@@ -1,10 +1,10 @@
-import { FIND_TWEET_BY_ID_FAILURE, FIND_TWEET_BY_ID_SUCCESS, GET_ALL_TWEETS_FAILURE, GET_ALL_TWEETS_REQUEST, GET_USERS_TWEETS_FAILURE, GET_USERS_TWEETS_REQUEST, GET_USERS_TWEETS_SUCCESS, LIKE_TWEETS_FAILURE, LIKE_TWEETS_SUCCESS, REPLY_TWEET_FAILURE, REPLY_TWEET_SUCCESS, TWEET_CREATE_FAILURE, TWEET_CREATE_SUCCESS, TWEET_DELETE_FAILURE, TWEET_DELETE_SUCCESS, USER_LIKE_TWEETS_SUCCESS } from "./ActionType"
+import { FIND_TWEET_BY_ID_FAILURE, FIND_TWEET_BY_ID_SUCCESS, GET_ALL_TWEETS_FAILURE, GET_ALL_TWEETS_REQUEST, GET_ALL_TWEETS_SUCCESS, GET_USERS_TWEETS_FAILURE, GET_USERS_TWEETS_REQUEST, GET_USERS_TWEETS_SUCCESS, LIKE_TWEETS_FAILURE, LIKE_TWEETS_SUCCESS, REPLY_TWEET_FAILURE, REPLY_TWEET_SUCCESS, RTWEET_FAILURE, RTWEET_SUCCESS, TWEET_CREATE_FAILURE, TWEET_CREATE_SUCCESS, TWEET_DELETE_FAILURE, TWEET_DELETE_SUCCESS, USER_LIKE_TWEETS_SUCCESS } from "./ActionType"
 
 export const getAllTweets = () => async (dispatch) => {
     try {
         const {data} = await api.get("/api/twits")
         console.log("get all tweets : ", data)
-        dispatch({type:GET_ALL_TWEETS_REQUEST,payload:data})
+        dispatch({type:GET_ALL_TWEETS_SUCCESS,payload:data})
     } catch (error) {
         console.log("catch error ",error)
         dispatch({type:GET_ALL_TWEETS_FAILURE,payload:error.message})
@@ -74,14 +74,14 @@ export const createTwitReply = (tweetData) => async (dispatch) => {
 }
 
 
-export const createRetweet = (twitId) => async (dispatch) => {
+export const createReTweet = (twitId) => async (dispatch) => {
     try {
-        const {data} = await api.post(`/api/twits/${twitId}/retwit`)
+        const {data} = await api.put(`/api/twits/${twitId}/retwit`)
         console.log("Retweets : ", data)
-        dispatch({type:REPLY_TWEET_SUCCESS,payload:data})
+        dispatch({type:RTWEET_SUCCESS,payload:data})
     } catch (error) {
         console.log("catch error ",error)
-        dispatch({type:REPLY_TWEET_FAILURE,payload:error.message})
+        dispatch({type:RTWEET_FAILURE,payload:error.message})
         
     }
 }
@@ -102,10 +102,13 @@ export const deleteTweet = (twitId) => async (dispatch) => {
     try {
         const {data} = await api.post(`/api/twits/${twitId}`)
         console.log("delete : ", data)
-        dispatch({type:TWEET_DELETE_SUCCESS,payload:data})
+        dispatch({type:TWEET_DELETE_SUCCESS,payload:twitId})
     } catch (error) {
         console.log("catch error ",error)
         dispatch({type:TWEET_DELETE_FAILURE,payload:error.message})
         
     }
 }
+
+
+

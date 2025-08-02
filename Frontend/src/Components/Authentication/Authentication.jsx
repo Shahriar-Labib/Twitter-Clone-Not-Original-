@@ -14,7 +14,7 @@ const Authentication = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 h-screen overflow-hidden">
       {/* Left side: Image and Logo */}
-      <div className="relative w-full h-full">
+      <div className="relative w-full h-screen">
         <img
           src="https://abs.twimg.com/sticky/illustrations/lohp_en_1302x955.png"
           alt="Background"

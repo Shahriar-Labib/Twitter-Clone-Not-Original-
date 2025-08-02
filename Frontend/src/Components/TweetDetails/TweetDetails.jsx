@@ -1,13 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TweetCard from '../HomeSection/TweetCard';
 import { Divider } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
+import { findTwitsById } from '../Store/Twit/Action';
+import store from '../Store/store';
 export const TweetDetails = () => {
 
     const navigate = useNavigate();
 
     const handleBack = () => navigate(-1);
+
+    const dispatch = useDispatch();
+
+    const {id} = useParams()
+    const {twit} = useSelector(store=>store)
+
+    useEffect(() => {
+        if(id){
+            dispatch(findTwitsById(id))
+        }
+    },[])
     return (
         <React.Fragment>
 
@@ -17,12 +31,12 @@ export const TweetDetails = () => {
             </section>
 
             <section>
-            <TweetCard />
+            <TweetCard item={twit.twit}/>
             <Divider sx={{margin:"2rem 0rem"}} />
             </section>
 
             <section>
-                {[1,1,1].map((items) => <TweetCard />)}
+                {twit.twit.replyTweet.map((items) => <TweetCard item={item} />)}
             </section>
 
 

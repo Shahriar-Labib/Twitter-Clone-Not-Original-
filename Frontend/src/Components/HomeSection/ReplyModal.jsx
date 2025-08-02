@@ -10,6 +10,8 @@ import FmdGoodIcon from '@mui/icons-material/FmdGood';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ImageIcon from '@mui/icons-material/Image';
 import { useFormik } from 'formik';
+import { useDispatch } from 'react-redux';
+import { createTwitReply } from '../Store/Twit/Action';
 
 const style = {
   position: 'absolute',
@@ -25,7 +27,7 @@ const style = {
   borderRadius: 4,
 };
 
-export default function ReplyModal({handleClose,open}) {
+export default function ReplyModal({handleClose,open,item}) {
   
   const handleOpen = () => setOpen(true);
   
@@ -33,8 +35,11 @@ export default function ReplyModal({handleClose,open}) {
   const [selectImage, setSelectedImage] = React.useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = (values) => {
+    dispatch(createTwitReply(values))
+    handleClose()
     console.log("Handle submit: ", values)
   }
 
@@ -42,7 +47,7 @@ export default function ReplyModal({handleClose,open}) {
     initialValues: {
       content: "",
       image: "",
-      twitId: 4,
+      twitId: item?.id,
     },
     onSubmit: handleSubmit
   })
@@ -68,7 +73,7 @@ export default function ReplyModal({handleClose,open}) {
           {/* Header Section */}
           <div className='flex items-start'>
             <Avatar
-              onClick={() => navigate(`/profile/${6}`)}
+              onClick={() => navigate(`/profile/${item?.user.id}`)}
               className='cursor-pointer'
               alt='username'
               src='https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp'
