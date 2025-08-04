@@ -5,6 +5,10 @@ import Modal from '@mui/material/Modal';
 import { Avatar, IconButton, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useFormik } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateUserProfile, getUserProfile } from '../Store/Auth/Action';
+import { uploadToCloudnary } from '../Utils/uploadToCloudnary';
+import store from '../Store/store';
 
 const style = {
   position: 'absolute',
@@ -21,31 +25,59 @@ const style = {
 };
 
 export default function ProfileModel({open,handleClose}) {
-  const handleSubmit = (values) => {
-    console.log("form submitted", values);
-  };
 
+
+  
  // const [open, setOpen] = React.useState(false);
  
   const [uploading, setUploading] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
+  const dispatch = useDispatch();
+  const [selectedImage,setSelectedImage] = React.useState("");
+  const {auth} = useSelector(store => store)
+
+  const handleSubmit = async (values) => {
+    try {
+      setSaving(true);
+      console.log("ProfileModel - Starting profile update with values:", values);
+      await dispatch(updateUserProfile(values));
+      console.log("ProfileModel - Profile update successful");
+      setSelectedImage("");
+      // Refresh user profile data after successful update
+      if (auth.jwt) {
+        console.log("ProfileModel - Refreshing user profile data");
+        await dispatch(getUserProfile(auth.jwt));
+        console.log("ProfileModel - User profile data refreshed");
+      }
+      // Close the modal after successful update
+      console.log("ProfileModel - Closing modal");
+      handleClose();
+    } catch (error) {
+      console.error("ProfileModel - Error updating profile:", error);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
-      website: "",
-      location: "",
-      bio: "",
-      backgroundImage: "",
-      image: ""
+      fullName: auth.user?.fullName || "",
+      website: auth.user?.website || "",
+      location: auth.user?.location || "",
+      bio: auth.user?.bio || "",
+      backgroundImage: auth.user?.backgroundImage || "",
+      image: auth.user?.image || ""
     },
-    onSubmit: handleSubmit
+    onSubmit: handleSubmit,
+    enableReinitialize: true
   });
 
-  const handleImageChange = (event) => {
+  const handleImageChange = async(event) => {
     setUploading(true);
     const { name } = event.target;
-    const file = event.target.files[0];
+    const file = await uploadToCloudnary(event.target.files[0]);
     formik.setFieldValue(name, file);
+    setSelectedImage(file);
     setUploading(false);
   };
 
@@ -67,7 +99,9 @@ export default function ProfileModel({open,handleClose}) {
                 </IconButton>
                 <p>Edit Profile</p>
               </div>
-              <Button type='submit'>Save</Button>
+              <Button type='submit' disabled={saving}>
+                {saving ? 'Saving...' : 'Save'}
+              </Button>
             </div>
 
             <div className='hideScrollBar overflow-y-scroll overflow-x-hidden h-[80vh]'>
@@ -79,7 +113,7 @@ export default function ProfileModel({open,handleClose}) {
                   <div className='relative h-[12rem]'>
                     <img
                       className='w-full h-full object-cover object-center'
-                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8cKsJP9qnawp05ofTbYbDnomqwQ3EFYK69g&s"
+                      src={formik.values.backgroundImage || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8cKsJP9qnawp05ofTbYbDnomqwQ3EFYK69g&s"}
                       alt="banner"
                     />
                     <input
@@ -98,7 +132,7 @@ export default function ProfileModel({open,handleClose}) {
                         height: '8rem',
                         border: '4px solid white',
                       }}
-                      src='https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp'
+                      src={ selectedImage || formik.values.image || auth.user?.image || 'https://www.earthtrekkers.com/wp-content/uploads/2021/01/Santorini.jpg.webp'}
                     />
 
                     <input name='image' onChange={handleImageChange} type="file" className='absolute top-0 left-0 w-[10rem] h-full opacity-0 cursor-pointer' />
@@ -120,6 +154,8 @@ export default function ProfileModel({open,handleClose}) {
       helperText={formik.touched.fullName && formik.errors.fullName}
     />
   </div>
+
+
 
   <div className='mb-4'>
     <TextField

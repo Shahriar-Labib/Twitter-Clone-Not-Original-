@@ -62,8 +62,8 @@ const TweetCard = ({item}) => {
                 <div className='flex justify-between items-center'>
                     <div className='flex cursor-pointer items-center space-x-2'>
                         <span className='font-semibold'>{item?.user?.fullName}</span>
-                        <span className='text-gray-600'>@{item?.user?.fullName.split(" ")
-                            .join("_").toLowerCase()}</span>
+                        <span className='text-gray-600'>@{item?.user?.fullName?.split(" ")
+                            .join("_").toLowerCase() || 'user'}</span>
                         <img className="ml-2 w-5 h-5" src="https://images.seeklogo.com/logo-png/39/1/google-verified-logo-png_seeklogo-392672.png" alt="" />
                     </div>
 
@@ -96,35 +96,35 @@ const TweetCard = ({item}) => {
                     <p className='mb-2 p-0'>
                         {item?.content}
                     </p>
-                    <img className='w-[28rem] border border-gray-400 p-5 rounded-md' src={item.image} alt="" />
+                    {item?.image && <img className='w-[28rem] border border-gray-400 p-5 rounded-md' src={item.image} alt="" />}
                 </div>
                 <div className='py-5 flex flex-wrap justify-between items-center'>
-                    <div className='space-x-3 flex items-center text-gray-600'>
-                        <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
-                        <p>{item?.totalReplies}</p>
-                    </div>
-                    <div className={`${item?.retwit ? "text-pink-600" : "text-gray-600"} space-x-3 flex items-center`}>
-                        <RepeatOnIcon 
-                        onClick={handleCreateRetweet}
-                        className='"cursor-pointer'
-                        />
+                                         <div className='space-x-3 flex items-center text-gray-600'>
+                         <ChatBubbleOutlineIcon className='cursor-pointer' onClick={handleOpenReplyModel} />
+                         <p>{item?.totalReplies || 0}</p>
+                     </div>
+                                         <div className={`${item?.retwit ? "text-pink-600" : "text-gray-600"} space-x-3 flex items-center`}>
+                         <RepeatOnIcon 
+                         onClick={handleCreateRetweet}
+                         className='cursor-pointer'
+                         />
 
-                        <p>{item?.totalRetweets}</p>
+                         <p>{item?.totalRetweets || 0}</p>
 
-                    </div>
+                     </div>
 
-                      <div className={`${item?.liked ? "text-pink-600" : "text-gray-600"} space-x-3 flex items-center`}>
-                        {item?.liked ? <FavoriteBorderIcon 
-                        onClick={handleLikeTweet}
-                        className='"cursor-pointer'
-                        /> : <FavoriteIcon 
-                        onClick={handleLikeTweet}
-                        className='"cursor-pointer'
-                        />}
+                                             <div className={`${item?.liked ? "text-pink-600" : "text-gray-600"} space-x-3 flex items-center`}>
+                         {item?.liked ? <FavoriteIcon 
+                         onClick={handleLikeTweet}
+                         className='cursor-pointer'
+                         /> : <FavoriteBorderIcon 
+                         onClick={handleLikeTweet}
+                         className='cursor-pointer'
+                         />}
 
-                        <p>{item?.totalLikes}</p>
+                         <p>{item?.totalLikes || 0}</p>
 
-                    </div>
+                     </div>
 
                     <div className='space-x-3 flex items-center text-gray-600'>
                         <BarChartIcon className='cursor-pointer' onClick={handleOpenReplyModel} />

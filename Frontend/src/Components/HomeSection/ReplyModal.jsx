@@ -12,6 +12,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { createTwitReply } from '../Store/Twit/Action';
+import { uploadToCloudnary } from '../Utils/uploadToCloudnary';
 
 const style = {
   position: 'absolute',
@@ -37,10 +38,20 @@ export default function ReplyModal({handleClose,open,item}) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleSubmit = (values) => {
-    dispatch(createTwitReply(values))
-    handleClose()
-    console.log("Handle submit: ", values)
+  const handleSubmit = async (values) => {
+    try {
+      // Add createdAt field
+      const replyData = {
+        ...values,
+        createdAt: new Date().toISOString()
+      };
+      
+      dispatch(createTwitReply(replyData))
+      handleClose()
+      console.log("Handle submit: ", replyData)
+    } catch (error) {
+      console.error("Failed to create reply:", error)
+    }
   }
 
   const formik = useFormik({
@@ -52,12 +63,18 @@ export default function ReplyModal({handleClose,open,item}) {
     onSubmit: handleSubmit
   })
 
-  const handleSelectImage = (event) => {
-    setUploadingImage(true);
-    const imgUrl = event.target.files[0];
-    formik.setFieldValue("image", imgUrl);
-    setSelectedImage(imgUrl)
-    setUploadingImage(false);
+  const handleSelectImage = async (event) => {
+    try {
+      setUploadingImage(true);
+      const imgUrl = await uploadToCloudnary(event.target.files[0]);
+      formik.setFieldValue("image", imgUrl);
+      setSelectedImage(imgUrl);
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      alert("Failed to upload image. Please try again.");
+    } finally {
+      setUploadingImage(false);
+    }
   }
 
   return (
@@ -132,6 +149,7 @@ export default function ReplyModal({handleClose,open,item}) {
                 <Button
                   variant='contained'
                   type='submit'
+                  disabled={uploadingImage}
                   sx={{
                     borderRadius: '9999px',
                     px: 3,
@@ -141,7 +159,7 @@ export default function ReplyModal({handleClose,open,item}) {
                     fontWeight: 'bold'
                   }}
                 >
-                  Tweet
+                  {uploadingImage ? 'Uploading...' : 'Tweet'}
                 </Button>
               </div>
             </form>

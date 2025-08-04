@@ -34,9 +34,9 @@ export const TweetDetails = () => {
             <TweetCard item={twit.twit}/>
             <Divider sx={{margin:"2rem 0rem"}} />
             </section>
-
+{/* 1.56 */}
             <section>
-                {twit.twit.replyTweet.map((items) => <TweetCard item={item} />)}
+                {twit.twit?.replyTweet.map((items) => <TweetCard item={item} />)}
             </section>
 
 

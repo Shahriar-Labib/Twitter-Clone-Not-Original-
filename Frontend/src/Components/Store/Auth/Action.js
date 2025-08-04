@@ -1,6 +1,7 @@
-import { API_BASE_URL } from "../../Config/api";
+import { API_BASE_URL, api } from "../../Config/api";
 import { FIND_TWEET_BY_ID_FAILURE } from "../Twit/ActionType";
 import {
+  FIND_USER_BY_ID_FAILURE,
   FIND_USER_BY_ID_SUCCESS,
   FOLLOW_USER_FAILURE,
   FOLLOW_USER_SUCCESS,
@@ -73,41 +74,39 @@ export const getUserProfile = (jwt) => async (dispatch) => {
 
 export const findUserById = (userId) => async (dispatch) => {
   try {
-    console.log("getUserProfile - Making API call with jwt:", jwt);
-    const { data } = await api.get(`${API_BASE_URL}/api/users/${userId}`)
+    console.log("findUserById - Making API call for userId:", userId);
+    const { data } = await api.get(`/api/users/${userId}`)
      
-
-   
     dispatch({ type: FIND_USER_BY_ID_SUCCESS, payload: data });
   } catch (error) {
-    console.log("getUserProfile - error:", error);
-    dispatch({ type: FIND_TWEET_BY_ID_FAILURE, payload: error.message });
+    console.log("findUserById - error:", error);
+    dispatch({ type: FIND_USER_BY_ID_FAILURE, payload: error.message });
   }
 };
 
 
 export const updateUserProfile = (reqData) => async (dispatch) => {
   try {
-    console.log("getUserProfile - Making API call with jwt:", jwt);
-    const { data } = await api.put(`${API_BASE_URL}/api/users/update`,reqData)
+    console.log("updateUserProfile - Making API call with data:", reqData);
+    const { data } = await api.put(`/api/users/update`,reqData)
     console.log("updated user ",data)
      
     dispatch({ type: UPDATE_USER_SUCCESS, payload: data });
   } catch (error) {
-    console.log("getUserProfile - error:", error);
+    console.log("updateUserProfile - error:", error);
     dispatch({ type: UPDATE_USER_FAILURE, payload: error.message });
   }
 };
 
 export const followUserAction = (userId) => async (dispatch) => {
   try {
-    console.log("getUserProfile - Making API call with jwt:", jwt);
-    const { data } = await api.put(`${API_BASE_URL}/api/users/${userId}/follow`,reqData)
-    console.log("updated user ",data)
+    console.log("followUserAction - Making API call for userId:", userId);
+    const { data } = await api.put(`/api/users/${userId}/follow`)
+    console.log("follow user response:", data)
      
     dispatch({ type: FOLLOW_USER_SUCCESS, payload: data });
   } catch (error) {
-    console.log("getUserProfile - error:", error);
+    console.log("followUserAction - error:", error);
     dispatch({ type: FOLLOW_USER_FAILURE, payload: error.message });
   }
 };
