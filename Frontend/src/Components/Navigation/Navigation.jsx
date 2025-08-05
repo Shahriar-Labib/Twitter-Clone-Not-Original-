@@ -63,7 +63,7 @@ const Navigation = () => {
                 key={item.title}
                 onClick={() =>
                   item.title === 'Profile'
-                    ? navigate(`/profile/${5}`)
+                    ? navigate(`/profile/${auth.user?.id}`)
                     : navigate(item.path)
                 }
                 className='cursor-pointer flex space-x-3 items-center hover:bg-gray-100 p-2 rounded'

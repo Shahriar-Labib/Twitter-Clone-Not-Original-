@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Avatar, Box, Button, Tab, Tabs } from '@mui/material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -9,7 +9,7 @@ import { TabContext, TabList,TabPanel } from '@mui/lab';
 import TweetCard from '../HomeSection/TweetCard';
 import ProfileModel from './ProfileModel';
 import { useSelector, useDispatch } from 'react-redux';
-import { getUserProfile } from '../Store/Auth/Action';
+import { findUserById, followUserAction, getUserProfile } from '../Store/Auth/Action';
 import store from '../Store/store';
 
 const Profile = () => {
@@ -38,9 +38,12 @@ const Profile = () => {
 
     const handleBack = () => navigate(-1);
 
+    const {id} = useParams()
+
    
 
     const handleFollowUser = () => {
+        dispatch(followUserAction(id))
         console.log("follow user");
     };
 
@@ -57,6 +60,10 @@ const Profile = () => {
         
     
     }
+
+    useEffect(() => {
+        dispatch(findUserById(id))
+    },[id])
 
 
     return (
@@ -91,7 +98,7 @@ const Profile = () => {
                         sx={{ width: "10rem", height: "10rem", border: "4px solid white" }}
                     />
 
-                    {true ? (
+                    {auth.findUser?.req_user? (
                         <Button
                             className="rounded-full"
                             variant="contained"
@@ -107,7 +114,7 @@ const Profile = () => {
                             sx={{ borderRadius: "20px" }}
                             onClick={handleFollowUser}
                         >
-                            {true ? "Follow" : "Unfollow"}
+                            {auth.user?.followed ? "Unfollow" : "Follow"}
                         </Button>
                     )}
                 </div>

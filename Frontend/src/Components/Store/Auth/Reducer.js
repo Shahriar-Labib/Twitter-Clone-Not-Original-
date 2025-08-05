@@ -33,6 +33,7 @@ export const authReducer = (state=initialState, action) => {
         
         
             case FIND_USER_BY_ID_SUCCESS:
+                
             console.log("Reducer - FIND_USER_BY_ID_SUCCESS payload:", action.payload);
             return {...state,loading:false,error:null,findUser:action.payload}
 
